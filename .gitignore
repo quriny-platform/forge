@@ -16,7 +16,13 @@ coverage.txt
 .vscode/
 .idea/
 
+# Claude / code review generated artifacts
 .code-review-graph/
+graphify-out/
+
+# Local / backup
+.claude/settings.local.json
+.claude/*.bak
 
 # Personal working notes — roadmap, learning links, security practices
 references/
