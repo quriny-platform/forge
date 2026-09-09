@@ -17,3 +17,6 @@ coverage.txt
 .idea/
 
 .code-review-graph/
+
+# Personal working notes — roadmap, learning links, security practices
+references/
