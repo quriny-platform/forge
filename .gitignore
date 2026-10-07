@@ -24,5 +24,3 @@ graphify-out/
 .claude/settings.local.json
 .claude/*.bak
 
-# Personal working notes — roadmap, learning links, security practices
-references/
