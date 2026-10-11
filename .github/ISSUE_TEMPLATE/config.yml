@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/quriny-platform/forge/security/advisories/new
+    about: Report privately through a GitHub security advisory. Never open a public issue.
+  - name: Roadmap and milestones
+    url: https://github.com/quriny-platform/forge/blob/main/docs/ROADMAP.md
+    about: Build order, layer rules, and what each milestone covers.

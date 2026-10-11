@@ -1,0 +1,99 @@
+name: Bug report
+description: Something in forge behaves incorrectly
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Do not report security vulnerabilities here.** Use
+        [private vulnerability reporting](https://github.com/quriny-platform/forge/security/advisories/new)
+        instead — see [SECURITY.md](https://github.com/quriny-platform/forge/blob/main/SECURITY.md).
+
+        forge is pre-v0.1.0. The API breaks without notice; please confirm the
+        behaviour against current `main` before filing.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened
+      description: One or two sentences. Details go in the fields below.
+    validations:
+      required: true
+
+  - type: input
+    id: go-version
+    attributes:
+      label: Go version
+      description: Output of `go version`.
+      placeholder: go version go1.27.1 darwin/arm64
+    validations:
+      required: true
+
+  - type: input
+    id: pg-version
+    attributes:
+      label: PostgreSQL version
+      description: Output of `SELECT version();`.
+      placeholder: PostgreSQL 17.2 on aarch64-unknown-linux-gnu
+    validations:
+      required: true
+
+  - type: input
+    id: forge-version
+    attributes:
+      label: forge version or commit
+      description: Tag, pseudo-version, or commit SHA. `main` moves — be specific.
+      placeholder: v0.0.0-20261011174136-c7b27e205664
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproducer
+    attributes:
+      label: Minimal reproducer
+      description: >-
+        A self-contained program that fails, not an excerpt from your
+        application. Include the schema if the failure depends on it.
+      render: go
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: Error text, stack trace, or wrong values. Paste it verbatim.
+    validations:
+      required: true
+
+  - type: textarea
+    id: topology
+    attributes:
+      label: Connection details
+      description: >-
+        `sslmode`, direct connection or pooled, anything between you and the
+        server (pgbouncer, pgpool, a cloud proxy), and whether the failure is
+        intermittent. Redact credentials.
+      placeholder: |
+        sslmode=verify-full, pool size 10, pgbouncer in transaction mode
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: hygiene
+    attributes:
+      label: Before submitting
+      options:
+        - label: >-
+            I have removed passwords, DSNs, API keys and other credentials from
+            everything pasted above.
+          required: true
+        - label: This is not a security vulnerability.
+          required: true

@@ -1,0 +1,79 @@
+name: Feature request
+description: Propose an addition or change to forge's API
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        forge is pre-v0.1.0 and follows a fixed build order
+        ([ROADMAP](https://github.com/quriny-platform/forge/blob/main/docs/ROADMAP.md)).
+        Additions are usually deferred to the milestone that owns the area, so
+        a pool feature will not land during an authentication milestone.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: >-
+        What are you trying to do that forge makes hard or impossible? Describe
+        the problem, not the solution — the best API often differs from the one
+        first imagined.
+    validations:
+      required: true
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: What you tried instead
+      description: >-
+        Existing APIs you attempted, and why they fell short. "Nothing yet" is
+        a valid answer.
+    validations:
+      required: false
+
+  - type: textarea
+    id: sketch
+    attributes:
+      label: Proposed API
+      description: >-
+        A short sketch of the call sites you would want. Signatures matter more
+        than implementation.
+      render: go
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: non-goals
+    attributes:
+      label: Scope
+      description: >-
+        forge does not authorise queries, sanitise application-authored SQL
+        strings, encrypt data at rest, manage keys, or rate-limit callers. These
+        are documented non-goals, not gaps —
+        [ADR 0002](https://github.com/quriny-platform/forge/blob/main/docs/adr/0002-security-boundaries.md).
+      options:
+        - label: This request does not ask forge to take on one of its non-goals.
+          required: true
+        - label: >-
+            A convenience helper that interpolates values into SQL cannot be
+            merged, and I am not proposing one.
+          required: true
+
+  - type: dropdown
+    id: layer
+    attributes:
+      label: Which layer
+      description: Where this would live. Pick "not sure" if the boundary is unclear.
+      options:
+        - forge (root interfaces)
+        - pgwire (wire protocol)
+        - pgtype (codecs, registry)
+        - pgconn (connection layer)
+        - postgres (driver adapter)
+        - pool
+        - scan
+        - qb (query builder)
+        - cli
+        - not sure
+    validations:
+      required: true
