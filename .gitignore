@@ -4,6 +4,12 @@
 *.test
 *.out
 coverage.txt
+coverage.html
+
+# Fuzz corpus cache. Reproduced crashers under testdata/fuzz are regression
+# tests and must be committed; generated corpus churn is not.
+testdata/fuzz/**/*
+!testdata/fuzz/**/*.go
 
 # Env
 .env
@@ -24,5 +30,3 @@ graphify-out/
 .claude/settings.local.json
 .claude/*.bak
 
-# Personal working notes — roadmap, learning links, security practices
-references/

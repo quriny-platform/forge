@@ -1,0 +1,23 @@
+version: 2
+updates:
+  # Keeps the SHA pins in .github/workflows/* current. Without this, pinning
+  # by commit becomes freezing, which is worse than tracking tags.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore"
+      include: scope
+
+  # No runtime dependencies by design (ADR 0002); this covers test and tool
+  # dependencies as they appear.
+  - package-ecosystem: gomod
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore"
+      include: scope
