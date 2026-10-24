@@ -26,8 +26,9 @@ var ErrClosed = errors.New("forge: connection is closed")
 // failure, which may be one of this package's sentinels; callers reach it
 // with errors.Is or errors.As.
 //
-// Args is retained for programmatic inspection only. Error() never renders it,
-// so an argument value cannot reach a log line through this type.
+// Args is retained for programmatic inspection only. Neither Error nor
+// Redacted renders it, so an argument value cannot reach a log line through
+// this type.
 type QueryError struct {
 	SQL  string
 	Args []any
@@ -46,4 +47,13 @@ func (q *QueryError) Error() string {
 // errors.Is and errors.As.
 func (q *QueryError) Unwrap() error {
 	return q.Err
+}
+
+// Redacted is the form loggers should use. It reports the SQL, how many
+// arguments were bound, and the cause, but never an argument value.
+func (q *QueryError) Redacted() string {
+	if q.Err == nil {
+		return fmt.Sprintf("forge: query %q (%d args redacted)", q.SQL, len(q.Args))
+	}
+	return fmt.Sprintf("forge: query %q (%d args redacted): %s", q.SQL, len(q.Args), q.Err)
 }

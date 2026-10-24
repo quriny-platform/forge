@@ -104,7 +104,7 @@ func TestQueryErrorAs(t *testing.T) {
 
 func TestQueryErrorRedactsArgs(t *testing.T) {
 	err := &QueryError{
-		SQL:  "SELECT * FROM users WHERE password = %1",
+		SQL:  "SELECT * FROM users WHERE password = $1",
 		Args: []any{"hunter2"},
 		Err:  ErrNoRows,
 	}
@@ -115,4 +115,31 @@ func TestQueryErrorRedactsArgs(t *testing.T) {
 	if len(err.Args) != 1 {
 		t.Errorf("len(Args) = %d, want 1; args stay for inspection", len(err.Args))
 	}
+}
+
+func FuzzQueryErrorRedaction(f *testing.F) {
+	f.Add("hunter2")
+	f.Add("")
+	f.Add("'; DROP TABLE users;--")
+	f.Add("%s %q %v %d")
+	f.Add("\x00\xff")
+
+	f.Fuzz(func(t *testing.T, secret string) {
+		// The marker makes the needle unique, so a fuzz input like "forge"
+		// or "" cannot match the fixed text of the message by accident.
+		needle := "ARG<" + secret + ">"
+
+		err := &QueryError{
+			SQL:  "SELECT * FROM users WHERE a = $1 AND b = $2",
+			Args: []any{needle, []byte(needle)},
+			Err:  ErrNoRows,
+		}
+
+		if strings.Contains(err.Error(), needle) {
+			t.Errorf("Error() leaked arg: %q", err.Error())
+		}
+		if strings.Contains(err.Redacted(), needle) {
+			t.Errorf("Redacted() leaked arg: %q", err.Redacted())
+		}
+	})
 }
