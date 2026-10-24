@@ -117,6 +117,38 @@ func TestQueryErrorRedactsArgs(t *testing.T) {
 	}
 }
 
+func TestQueryErrorRedacted(t *testing.T) {
+	tests := []struct {
+		name string
+		err  *QueryError
+		want string
+	}{
+		{
+			name: "no args",
+			err:  &QueryError{SQL: "SELECT 1", Err: ErrNoRows},
+			want: `forge: query "SELECT 1" (args redacted: 0): forge: no rows in result set`,
+		},
+		{
+			name: "args are counted not shown",
+			err:  &QueryError{SQL: "SELECT $1", Args: []any{"hunter2", 42}, Err: ErrClosed},
+			want: `forge: query "SELECT $1" (args redacted: 2): forge: connection is closed`,
+		},
+		{
+			name: "nil cause",
+			err:  &QueryError{SQL: "SELECT $1", Args: []any{"hunter2"}},
+			want: `forge: query "SELECT $1" (args redacted: 1)`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.err.Redacted(); got != tt.want {
+				t.Errorf("Redacted() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
 func FuzzQueryErrorRedaction(f *testing.F) {
 	f.Add("hunter2")
 	f.Add("")

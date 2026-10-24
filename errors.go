@@ -51,9 +51,12 @@ func (q *QueryError) Unwrap() error {
 
 // Redacted is the form loggers should use. It reports the SQL, how many
 // arguments were bound, and the cause, but never an argument value.
+//
+// The cause is printed as-is. If Err itself quotes data, such as a server
+// message naming a conflicting key, that text is not sanitized here.
 func (q *QueryError) Redacted() string {
 	if q.Err == nil {
-		return fmt.Sprintf("forge: query %q (%d args redacted)", q.SQL, len(q.Args))
+		return fmt.Sprintf("forge: query %q (args redacted: %d)", q.SQL, len(q.Args))
 	}
-	return fmt.Sprintf("forge: query %q (%d args redacted): %s", q.SQL, len(q.Args), q.Err)
+	return fmt.Sprintf("forge: query %q (args redacted: %d): %s", q.SQL, len(q.Args), q.Err)
 }
