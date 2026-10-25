@@ -14,8 +14,9 @@
 //
 // Every query entry point takes the SQL text and its arguments separately:
 // (sql string, args ...any). No function in this package accepts SQL built
-// from values, and there is no Queryf. Values travel as bound parameters, so
-// injection cannot be expressed through this API.
+// from values, and there is no Queryf. forge never interpolates args into
+// sql; they travel as bound parameters. forge does not inspect or sanitise
+// the sql text itself, so callers must not build it from untrusted input.
 //
 // # Errors
 //
