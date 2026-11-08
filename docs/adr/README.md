@@ -14,13 +14,16 @@ Date: YYYY-MM-DD
 Status: Proposed | Accepted | Superseded by [NNNN](NNNN-....md)
 
 ## Context
+
 What forces are at play? What does pgx (or database/sql) do here, and why is
 that not the right fit for forge?
 
 ## Decision
+
 What we do, stated in the active voice.
 
 ## Consequences
+
 What becomes easier. What becomes harder. What we must remember later.
 ```
 
@@ -28,3 +31,4 @@ What becomes easier. What becomes harder. What we must remember later.
 
 - [0001 — Record architecture decisions](0001-record-architecture-decisions.md) — Accepted
 - [0002 — Security boundaries and non-goals](0002-security-boundaries.md) — Accepted
+- [0003 — Rows value access and untyped query arguments](0003-rows-values-and-field-descriptions.md) — Accepted
