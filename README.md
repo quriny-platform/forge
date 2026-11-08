@@ -39,26 +39,26 @@ if err != nil {
 
 ## Status
 
-| # | Milestone | State |
-|---|---|---|
-| M00 | Repo foundation & CI | 🔨 in progress |
-| M01 | Core interfaces & errors | ⬜ |
-| M02 | Wire protocol v3 | ⬜ |
-| M03 | Connection + simple query | ⬜ |
-| M04 | SCRAM-SHA-256 auth | ⬜ |
-| M05 | TLS & sslmode | ⬜ |
-| M06 | Text codecs & registry | ⬜ |
-| M07 | Extended query protocol | ⬜ |
-| M08 | Binary codecs | ⬜ |
-| M09 | Cancellation & deadlines | ⬜ |
-| M10 | Driver adapter | ⬜ |
-| M11 | Connection pool | ⬜ |
-| M12 | Row scanner | ⬜ |
-| M13 | Query builder | ⬜ |
-| M14 | EntityStore migration | ⬜ |
-| M15 | COPY protocol | ⬜ |
-| M16 | CLI | ⬜ |
-| M17 | Release & open source | ⬜ |
+| #   | Milestone                 | State |
+| --- | ------------------------- | ----- |
+| M00 | Repo foundation & CI      | ✅    |
+| M01 | Core interfaces & errors  | ✅    |
+| M02 | Wire protocol v3          | ⬜    |
+| M03 | Connection + simple query | ⬜    |
+| M04 | SCRAM-SHA-256 auth        | ⬜    |
+| M05 | TLS & sslmode             | ⬜    |
+| M06 | Text codecs & registry    | ⬜    |
+| M07 | Extended query protocol   | ⬜    |
+| M08 | Binary codecs             | ⬜    |
+| M09 | Cancellation & deadlines  | ⬜    |
+| M10 | Driver adapter            | ⬜    |
+| M11 | Connection pool           | ⬜    |
+| M12 | Row scanner               | ⬜    |
+| M13 | Query builder             | ⬜    |
+| M14 | EntityStore migration     | ⬜    |
+| M15 | COPY protocol             | ⬜    |
+| M16 | CLI                       | ⬜    |
+| M17 | Release & open source     | ⬜    |
 
 ## Architecture
 

@@ -1,9 +1,10 @@
-# M01 — Core interfaces & errors  `feat/core-interfaces`
+# M01 — Core interfaces & errors `feat/core-interfaces`
 
 **Covers:** interface design · sentinel errors & wrapping · `errors.Is`/`As` ·
 table-driven tests · compile-time interface assertions
 
 **Links**
+
 - [`database/sql/driver`](https://pkg.go.dev/database/sql/driver) — read every interface before you start
 - [Working with Errors in Go 1.13](https://go.dev/blog/go1.13-errors)
 - [Error handling and Go](https://go.dev/blog/error-handling-and-go)
@@ -18,21 +19,21 @@ table-driven tests · compile-time interface assertions
 
 ## Steps
 
-- [ ] **1. RED is already written.** Run `go test ./...`. It fails to compile:
+- [✅] **1. RED is already written.** Run `go test ./...`. It fails to compile:
   `undefined: forge.ErrNoRows`. Read `errors_test.go` and note what it demands —
   distinct sentinels that survive `%w` wrapping.
 
-- [ ] **2. GREEN — `errors.go`.** Declare package `forge` and three sentinels
+- [✅] **2. GREEN — `errors.go`.** Declare package `forge` and three sentinels
   with `errors.New`. Naming and messages:
   - `ErrNoRows` — `"forge: no rows in result set"`
   - `ErrTooManyRows` — `"forge: too many rows in result set"`
   - `ErrClosed` — `"forge: connection is closed"`
-  Each gets a doc comment explaining *when a caller sees it*, not what it says.
-  Why `errors.New` and not a struct: sentinels are identity, not data;
-  `errors.Is` compares pointers.
-  *Commit:* `feat: add core sentinel errors`
+    Each gets a doc comment explaining _when a caller sees it_, not what it says.
+    Why `errors.New` and not a struct: sentinels are identity, not data;
+    `errors.Is` compares pointers.
+    _Commit:_ `feat: add core sentinel errors`
 
-- [ ] **3. RED — structured error.** New test `TestQueryError` in `errors_test.go`:
+- [✅] **3. RED — structured error.** New test `TestQueryError` in `errors_test.go`:
   a `*forge.QueryError` must (a) render `forge: query "SELECT 1": <cause>`,
   (b) `errors.Is(err, forge.ErrNoRows)` when it wraps that sentinel,
   (c) be findable with `errors.As(err, &qe)` from three wrapping layers deep,
@@ -40,15 +41,16 @@ table-driven tests · compile-time interface assertions
   `!strings.Contains(err.Error(), "secret")` after constructing it with an
   argument `"secret"`.
 
-- [ ] **4. GREEN — `QueryError`.** Struct fields: `SQL string`, `Args []any`
+- [✅] **4. GREEN — `QueryError`.** Struct fields: `SQL string`, `Args []any`
   (kept for programmatic inspection, never printed), `Err error`. Methods on
   pointer receiver: `Error() string` (uses `%q` on SQL, delegates to `e.Err`) and
   `Unwrap() error`. The redaction rule is the point of this milestone: the type
-  *holds* the args, `Error()` *never* renders them.
-  *Commit:* `feat: add QueryError with arg redaction`
+  _holds_ the args, `Error()` _never_ renders them.
+  _Commit:_ `feat: add QueryError with arg redaction`
 
-- [ ] **5. RED — the interface contracts.** New file `forge_test.go`. Write
+- [✅] **5. RED — the interface contracts.** New file `forge_test.go`. Write
   compile-time assertions against a fake implemented in the test file:
+
   ```go
   var (
       _ forge.Driver = (*fakeDriver)(nil)
@@ -56,12 +58,13 @@ table-driven tests · compile-time interface assertions
       // ... Rows, Result, Stmt, Tx
   )
   ```
+
   Then a behavioural test `TestRowsIteration` driving the fake: `Next()` returns
   true twice then false, `Err()` returns nil, `Close()` is idempotent (call it
   twice, expect no panic and no error). Writing the fake first is how you
   discover whether the interface is pleasant to implement.
 
-- [ ] **6. GREEN — `forge.go`.** Define, all with `context.Context` as first
+- [✅] **6. GREEN — `forge.go`.** Define, all with `context.Context` as first
   parameter where blocking:
   - `Driver`: `Open(ctx context.Context, dsn string) (Conn, error)`
   - `Conn`: `Ping(ctx) error`; `Exec(ctx, sql string, args ...any) (Result, error)`;
@@ -80,55 +83,55 @@ table-driven tests · compile-time interface assertions
     `DeferrableMode DeferrableMode` — each a `string`-based named type with
     exported constants (`Serializable`, `RepeatableRead`, `ReadCommitted`,
     `ReadUncommitted`; `ReadWrite`, `ReadOnly`; `Deferrable`, `NotDeferrable`).
-  Design notes to think through before typing: `Rows.Next()` returns `bool` not
-  `(bool, error)` because errors are collected and surfaced by `Err()` — same
-  contract as `database/sql` and `bufio.Scanner`; that is a deliberate borrow, so
-  no ADR needed. `Values()` is forge's addition over `driver.Rows` — it *is* a
-  divergence, so it needs one.
-  *Commit:* `feat: add core Driver/Conn/Rows/Result/Stmt/Tx interfaces`
+    Design notes to think through before typing: `Rows.Next()` returns `bool` not
+    `(bool, error)` because errors are collected and surfaced by `Err()` — same
+    contract as `database/sql` and `bufio.Scanner`; that is a deliberate borrow, so
+    no ADR needed. `Values()` is forge's addition over `driver.Rows` — it _is_ a
+    divergence, so it needs one.
+    _Commit:_ `feat: add core Driver/Conn/Rows/Result/Stmt/Tx interfaces`
 
-- [ ] **7. RED — the layer rule, as a test.** `internal/architecture_test.go`:
+- [✅] **7. RED — the layer rule, as a test.** `internal/architecture_test.go`:
   run `go list -deps -f '{{.ImportPath}}' github.com/quriny-platform/forge` via
   `os/exec`, assert every dependency is either stdlib (no dot in the first path
   segment) or inside the module. Skip with `testing.Short()`.
 
-- [ ] **8. GREEN.** Nothing to implement — the root package is already
-  stdlib-only. The test's job is to *stay* green as later milestones land. Extend
+- [✅] **8. GREEN.** Nothing to implement — the root package is already
+  stdlib-only. The test's job is to _stay_ green as later milestones land. Extend
   it with a table: package under test → allowed import prefixes, seeded with the
   layer table from [ROADMAP.md](../ROADMAP.md).
-  *Commit:* `test: enforce import direction with go list`
+  _Commit:_ `test: enforce import direction with go list`
 
-- [ ] **9. REFACTOR.** Move the sentinels' doc comments into a package-level
+- [✅] **9. REFACTOR.** Move the sentinels' doc comments into a package-level
   `doc.go` overview describing what `forge` is and how the layers relate. Verify
   every exported identifier has a comment starting with its own name.
-  *Commit:* `docs: add package overview`
+  _Commit:_ `docs: add package overview`
 
-- [ ] **10. ADR.** `docs/adr/0003-rows-values-and-field-descriptions.md` —
+- [✅] **10. ADR.** `docs/adr/0003-rows-values-and-field-descriptions.md` —
   why `Rows` exposes `Values()` and `FieldDescriptions()` (needed by `scan` at
   M12 for `RowToMap` without a second round trip), and why forge's `Conn` takes
   `...any` args rather than `driver.NamedValue`.
-  *Commit:* `docs: ADR 0003 rows value access`
+  _Commit:_ `docs: ADR 0003 rows value access`
 
 ## Security (OWASP)
 
 **Risks: [A04 Insecure Design](https://owasp.org/Top10/A04_2021-Insecure_Design/) · [A09 Logging Failures](https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/)**
 
-The API shape decided here determines whether injection is *expressible* later.
+The API shape decided here determines whether injection is _expressible_ later.
 This is the cheapest possible moment to get it right.
 
-- [ ] **Design rule, written into `doc.go`:** no exported function in `forge`
+- [✅] **Design rule, written into `doc.go`:** no exported function in `forge`
   ever takes a pre-formatted SQL string built from values. Every query entry
   point is `(sql string, args ...any)`. There is no `Queryf`. There never will be.
-- [ ] **`QueryError` holds args but never prints them.** Already in step 4 —
+- [✅] **`QueryError` holds args but never prints them.** Already in step 4 —
   treat it as the security control it is. Add the negative test explicitly:
   `TestQueryErrorRedactsArgs` constructs the error with `"hunter2"` and asserts
   `!strings.Contains(err.Error(), "hunter2")`.
-- [ ] Give `QueryError` a `Redacted() string` used by loggers, and document that
+- [✅] Give `QueryError` a `Redacted() string` used by loggers, and document that
   `Args` is for programmatic inspection only. See
   [Error Handling](https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html).
-- [ ] Sentinel errors must not leak schema detail. `ErrNoRows` says "no rows",
+- [✅] Sentinel errors must not leak schema detail. `ErrNoRows` says "no rows",
   not "no rows in table users where id=42".
-- [ ] **Read and confirm ADR [0002 — Security boundaries](../adr/0002-security-boundaries.md)**
+- [✅] **Read and confirm ADR [0002 — Security boundaries](../adr/0002-security-boundaries.md)**
   against the API you just designed. It records the trust boundaries (TB1–TB4)
   and non-goals from [SECURITY-PRACTICES.md](../SECURITY-PRACTICES.md); ASVS V1
   treats the threat model as a deliverable. If your interfaces contradict it,
